@@ -1,0 +1,34 @@
+<!doctype html>
+  <html>
+    <head>
+      <title>Code Snippet Interface</title>
+      <link rel="stylesheet" href="../css/styles.css">
+      <meta charset="utf-8">
+      <body>
+        <section>
+        <h3>{{req.session.username}}, Enter your code snippet here</h3>
+        <form method="post" action="/create">
+          <label for="coder">Coder: </label>
+          <input type="text" name="coder" id="coder" placeholder="Please enter a name: ">
+          <label for="title">Title: </label>
+          <input type="text" name="title" id="title" placeholder="Please enter a title: ">
+          <label for="published_date">Date Published: </label>
+          <input type="date" name="published_date" id="published_date" placeholder="Please select a date: ">
+          <label for="body">Code Snippet: </label>
+          <textarea rows="10" cols="19" name="body" id="body" placeholder="Please enter your code: "></textarea>
+          <label for="notes">Notes: </label>
+          <textarea rows="10" cols="19" name="notes" id="notes" placeholder="Place any notes here: "></textarea>
+          <label for="language">Language: </label>
+          <input type="text" name="language" id="language" placeholder="Coded in which language: ">
+            <label for="tags">Tags: </label>
+          <input type="text" name="tags" id="tags" placeholder="Seperate tags with commas">
+          <input type="submit" value="submit">
+        </form>
+        <form method="get" action="/search">
+        <button value="search">Search</button><button><a href="edit">Edit</a></button>
+        </form>
+      </section>
+
+      </body>
+    </head>
+    </html>

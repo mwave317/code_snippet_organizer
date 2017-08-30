@@ -1,0 +1,26 @@
+{
+  "name": "code_snippet_organizer",
+  "version": "1.0.0",
+  "description": "\"Code Snippet Interface\"",
+  "main": "serverside.js",
+  "scripts": {
+    "test": "test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mwave317/code_snippet_organizer.git"
+  },
+  "author": "Ken Coppola",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/mwave317/code_snippet_organizer/issues"
+  },
+  "homepage": "https://github.com/mwave317/code_snippet_organizer#readme",
+  "dependencies": {
+    "bluebird": "^3.5.0",
+    "body-parser": "^1.17.2",
+    "express": "^4.15.4",
+    "express-session": "^1.15.5",
+    "mustache-express": "^1.2.5"
+  }
+}

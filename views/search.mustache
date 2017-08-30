@@ -1,0 +1,30 @@
+<!doctype html>
+  <html>
+    <head>
+      <title>Code Snippet Interface</title>
+      <meta charset="utf-8">
+        <link rel="stylesheet" href="../css/styles.css">
+      <body>
+
+<section class="search">
+<h4>Search for a code snippet by coder, title, date published and/or language.</h4>
+<form method="post" action="/search">
+  <label for="coder">Coder: </label>
+  <input type="text" name="coder" id="coder" placeholder="Please enter a name: ">
+  <label for="title">Title: </label>
+  <input type="text" name="title" id="title" placeholder="Please enter a title: ">
+  <label for="published_date">Date Published: </label>
+  <input type="date" name="published_date" id="published_date" placeholder="Please select a date: ">
+  <label for="language">Language: </label>
+  <input type="text" name="language" id="language" placeholder="Coded in which language: ">
+  <label for="tags">Tags: </label>
+  <input type="text" name="tags" id="tags" placeholder="Seperate tags with commas">
+  <input type="submit" value="submit">
+</form>
+<button><a href="create">Create</a></button><button><a href="edit">Edit</a></button>
+</section>
+<p>{{#returnedData}}<figure><h3>{{title}}</h3><p>{{body}}</p><p>{{notes}}</p><p>{{language}}</p><p>{{tags}}</p></figure>{{/returnedData}}</p>
+
+  <h3>{{title}}</h3>
+    </body>
+  </html>
