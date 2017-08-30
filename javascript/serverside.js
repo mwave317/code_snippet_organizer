@@ -66,19 +66,28 @@ server.get('/login', function (req, res){
 
 server.post('/login', function(req, res) {
   //Check out .populate
+  let username = null;
+    if (req.body.username === username && req.body.password === password) {
+      console.log('Wrong username or password');
+      res.render('login');
+    }
+  else if (username !== null) {
+    req.session.username = username;
+    res.redirect('/search');
+  }
   req.session.username = req.body.username;
     User.findOne({username: req.body.username})
       .then(function(data){
         req.session.ObjectId = data._id;
         console.log(data._id);
-        res.render('create', { // save the uername and id and cannot be done in the rendor
+        res.render('search', { // save the uername and id and cannot be done in the rendor
         username: req.session.username,
         user: req.session.ObjectId, //don't forget to pass the object id and username in the session
         })
       });
 });
 server.get('/create', function(req, res){
-  res.render('create', {
+  res.render('search', {
     username: req.session.username,
     user: req.session.ObjectId,
 
@@ -87,7 +96,7 @@ server.get('/create', function(req, res){
 })
 server.post('/create', function(req, res){
   Snippet.create({
-    coder: req.body.coder, title: req.body.title,
+    coder: req.body.coder, title: req.body.title.toUpperCase(),
     published_date: req.body.published_date, body: req.body.body,
     notes: req.body.notes, language: req.body.language,
     rating: req.body.rating, tags: req.body.tags,
@@ -102,13 +111,14 @@ server.post('/create', function(req, res){
         //console.log(req.body.coder, req.body.title,req.body.published_date,req.body.body,req.body.language,req.body.notes,req.body.rating,req.body.tags, req.session.username);
         console.log("The snippet wasn't added")
     });
-      res.render('create');
+      res.render('search');
 });
 
 server.get('/search', function(req, res){
 
     res.render('search');
 });
+
 server.post('/search', function(req, res){
   if (req.body.coder !== '' && req.body.language !== '') {
      Snippet.find({ coder: req.body.coder, language: req.body.language })
@@ -195,14 +205,19 @@ server.post('/search', function(req, res){
               };
     });
 server.get('/edit', function(req, res){
-  res.render('edit');
+  res.render('search');
 })
 server.post('/edit', function(req, res){
-  res.render('edit');
+  res.render('search', function (){
+    Snippet.edit({
+      title: req.body.title, body: req.body.body,
+      language: req.body.language, tags: req.body.tags
+    })
+  });
 })
 
 server.get('/snippet', function(req, res){
-  res.render('index');
+  res.render('search');
 })
 
 server.listen(3300, function(req, res){
