@@ -208,14 +208,19 @@ server.get('/edit', function(req, res){
   res.render('search');
 })
 server.post('/edit', function(req, res){
-  res.render('search', function (){
-    Snippet.edit({
-      title: req.body.title, body: req.body.body,
-      language: req.body.language, tags: req.body.tags
-    })
+    Snippet.findOneAndUpdate({coder: req.body.coder, title: req.body.title}, {language: req.body.body},
+      {upsert: true, new: true, runValidators: true})
+      .then(function(err, doc) {
+        if (err){
+          console.log(err);
+        }
+        res.render('search');
+      })
+      .catch (function (){
+        console.log("This didn't work");
+      })
+      // });
   });
-})
-
 server.get('/snippet', function(req, res){
   res.render('search');
 })
