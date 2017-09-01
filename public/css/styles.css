@@ -1,30 +1,46 @@
+main {
+  display: flex;
+  align-items: flex-start;
 
+}
 section {
-  margin: 20%;
-  border: 3px solid black;
-  background-color: gray;
-  margin: 40% 55%;
+
+  margin: 5%;
+  /*border: 3px solid black;*/
+
+  /*margin: 40% 55%;*/
+  height: 30%;
+  width: 30%;
 }
 
-.search{
+/*.search{
   margin: 25% 45%;
-}
-
-/*body {
-  background-image: url("../img/Computers-Code.jpg");
-
 }*/
 
-h3 {
-  color: blue;
-  font-size: 2em;
+body {
+  background-image: url("../img/yoda.jpeg");
+  color: white;
 }
 
+h3 {
+  font-size: 2em;
+}
+input {
+  height: 30px;
+  width: 90%;
+  padding: 1%;
+  margin: 1%;
+}
+textarea {
+  padding: 1%;
+  margin: 1%;
+  margin-left: 2%;
+}
 figure {
   display: inline-block;
   padding: 1%;
-  height: 400px;
-  width: 400px;
-  background-color: gray;
+  /*height: 400px;*/
+  width: 350px
+  color: blue;
   border: 3px solid darkgray;
 }

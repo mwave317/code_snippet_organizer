@@ -8,7 +8,7 @@ body: {type: String, required: true},
 notes:{type: String, required: true},
 language: {type: String, required: true},
 rating: {type: Number},
-tags: {type: String, required: true},
+tags: {type: Array, required: true},
 user: { type: mongoose.Schema.Types.ObjectId, ref: 'User'},
 });
 const userSchema = new mongoose.Schema({

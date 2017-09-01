@@ -18,6 +18,8 @@ server.use(session({
     resave: false,
     saveUninitialized: true
   }));
+
+  // };
 server.get('/signup', function(req, res){
     const states = [{value: "AL", state: "AL"}, {value: "AK", state: "AK"},
      {value: "AZ", state: "AZ"},{value: "AR", state: "AR"}, {value: "CA", state: "CA"},
@@ -65,18 +67,13 @@ server.get('/login', function (req, res){
 });
 
 server.post('/login', function(req, res) {
-  //Check out .populate
-  let username = null;
-    if (req.body.username === username && req.body.password === password) {
+    if (req.body.username !== username && req.body.password !== password) {
       console.log('Wrong username or password');
       res.render('login');
     }
   else if (username !== null) {
-    req.session.username = username;
-    res.redirect('/search');
-  }
   req.session.username = req.body.username;
-    User.findOne({username: req.body.username})
+    User.findOne({username: req.body.username, password: req.body.password})
       .then(function(data){
         req.session.ObjectId = data._id;
         console.log(data._id);
@@ -85,6 +82,8 @@ server.post('/login', function(req, res) {
         user: req.session.ObjectId, //don't forget to pass the object id and username in the session
         })
       });
+      res.redirect('/search');
+    }
 });
 server.get('/create', function(req, res){
   res.render('search', {
@@ -93,23 +92,38 @@ server.get('/create', function(req, res){
 
   });
   console.log(req.session.username, req.session.ObjectId);
+  console.log(req.session.username)
 })
 server.post('/create', function(req, res){
+
+function seperateTags(categories){
+  let splitTags = categories.split(","); // split the string at the commas for each tag
+  let tagsInput=[]; //create the empty array to store the split strings once they are trimmed
+  for (let i=0; i<splitTags.length; i++){ //loops over the split tags ;
+    tagsInput.push(splitTags[i].trim());//trims each word to remove the empty spaces.
+  }
+
+    //tags.push(tagsInput);
+
+    return tagsInput;
+  };
+  console.log(seperateTags(req.body.tags));
   Snippet.create({
-    coder: req.body.coder, title: req.body.title.toUpperCase(),
-    published_date: req.body.published_date, body: req.body.body,
-    notes: req.body.notes, language: req.body.language,
-    rating: req.body.rating, tags: req.body.tags,
+
+    coder: req.body.coder.toLowerCase(), title: req.body.title.toLowerCase(),
+    published_date: req.body.published_date, body: req.body.body.toLowerCase(),
+    notes: req.body.notes.toLowerCase(), language: req.body.language.toLowerCase(),
+    rating: req.body.rating, tags: seperateTags(req.body.tags.toLowerCase()),
     user: req.session.ObjectId, ref: req.session.username,
 
   })
     .then(function(){
         console.log("The snippet was added");
-        console.log(req.session.ObjectId);
+        // console.log(req.session.ObjectId);
     })
-    .catch(function(){
+    .catch(function(err){
         //console.log(req.body.coder, req.body.title,req.body.published_date,req.body.body,req.body.language,req.body.notes,req.body.rating,req.body.tags, req.session.username);
-        console.log("The snippet wasn't added")
+        console.log(err)
     });
       res.render('search');
 });
@@ -120,6 +134,24 @@ server.get('/search', function(req, res){
 });
 
 server.post('/search', function(req, res){
+  function snippetFind(type, alter) {
+    let updateObject = {};
+
+    updateObject[type] = alter;
+
+  Snippet.find(updateObject)
+    .then(function(data){
+      res.render('search', {
+        type: alter,
+      returnedData: data
+      });
+    console.log(type, alter);
+      console.log(data);
+    })
+    .catch(function(){
+      console.log("The search didn't work!");
+    });
+  };
   if (req.body.coder !== '' && req.body.language !== '') {
      Snippet.find({ coder: req.body.coder, language: req.body.language })
        .then(function(data){
@@ -129,98 +161,50 @@ server.post('/search', function(req, res){
        })
        .catch(function(){
        });
-   } else if (req.body.tags !== ''){
-      Snippet.find({tags: req.body.tags})
-        .then(function(data){
-          res.render('search', {
-          returnedData: data
-          });
-        console.log(req.body.tags);
-          console.log(data);
-        })
-        .catch(function(){
-          console.log("The search didn't work!");
-        });
-    } else if( req.body.coder !== '') {
-      console.log('this is a test');
-        Snippet.find({coder: req.body.coder})
-          .then(function(data){
-            res.render('search', {
-            returnedData: data
-            });
-            console.log("I should be printing" + req.body.coder);
-            // console.log(data);
-          })
-          .catch(function(){
-            console.log("The search didn't work!");
-          });
-       } else if (req.body.language !== ''){
-          Snippet.find({tags: req.body.language})
-            .then(function(data){
-              res.render('search', {
-              returnedData: data
-              });
-                console.log(req.body.language);
-                // console.log(data);
-            })
-            .catch(function(){
-              console.log("The language search didn't work!");
-            });
-         } else if( req.body.published_date !== '') {
-            Snippet.find({coder: req.body.published_date})
-              .then(function(data){
-                res.render('search', {
-                returnedData: data
-                });
-                  console.log(req.body.published_date);
-                  // console.log(data);
-              })
-              .catch(function(){
-                console.log("The search didn't work!");
-              });
-            } else if (req.body.title !== ''){
-                Snippet.find({tags: req.body.title})
-                  .then(function(data){
-                    res.render('search', {
-                    returnedData: data
-                    });
-                      console.log(req.body.title);
-                      // console.log(data);
-                  })
-                  .catch(function(){
-                    console.log("The language search didn't work!");
-                  });
-            } else if (req.body.title !== ''){
-                Snippet.find({tags: req.body.title})
-                  .then(function(data){
-                    res.render('search', {
-                    returnedData: data
-                    });
-                      console.log(req.body.title);
-                      // console.log(data);
-                  })
-                  .catch(function(){
-                    console.log("The language search didn't work!");
-                  });
-              };
+  } if (req.body.tags !== ''){
+    snippetFind("tags", req.body.tags);
+    }
+    if( req.body.coder !== '') {
+      snippetFind("coder", req.body.coder);
+    } if (req.body.language !== ''){
+         snippetFind("language", req.body.language);
+      } if( req.body.published_date !== '') {
+           snippetFind("published_date", req.body.published_date );
+        } if (req.body.title !== ''){
+              snippetFind("title", req.body.title);
+          }
     });
 server.get('/edit', function(req, res){
   res.render('search');
 })
 server.post('/edit', function(req, res){
-    Snippet.findOneAndUpdate({coder: req.body.coder, title: req.body.title}, {language: req.body.body},
+  function updateSnippet(field, change){
+    let updateObject = {};
+    updateObject[field] = change;
+    Snippet.findOneAndUpdate({coder: req.body.coder, title: req.body.title}, updateObject,
       {upsert: true, new: true, runValidators: true})
       .then(function(err, doc) {
         if (err){
           console.log(err);
         }
-        res.render('search');
       })
       .catch (function (){
         console.log("This didn't work");
       })
-      // });
-  });
+    }
+    if (req.body.body !== ""){
+      updateSnippet("body", req.body.body);
+    } if (req.body.notes !== ""){
+      updateSnippet("notes", req.body.notes);
+      }
+    if (req.body.language !== "") {
+      updateSnippet("language", req.body.language);
+    }
+    if (req.body.tags !== "") {
+      updateSnippet("tags", req.body.tags);
+    }
+    res.render('search');
+});
 server.get('/snippet', function(req, res){
   res.render('search');
 })
