@@ -18,7 +18,10 @@ server.use(session({
     resave: true,
     saveUninitialized: false
   }));
-
+server.use(function (req, res, next) {
+  res.locals.currentUser = req.session.userId;
+  next();
+});
   // };
 server.get('/signup', function(req, res){
     const states = [{value: "AL", state: "AL"}, {value: "AK", state: "AK"},
@@ -58,7 +61,6 @@ server.post('/signup', function(req, res){
   .catch(function(err){
     console.log(err);
   })
-  req.session.userId = user.id;
     res.render('login');
 });
 
@@ -71,10 +73,11 @@ if (req.body.username && req.body.password) {
   User.authenticate(req.body.username, req.body.password, function (error, user){
     if (error || !user) {
       let error = new Error('That username or password does not match our records.');
-      // res.redirect('login')
-      return next(error);
+  error.status = 401;
+      return error;
     } else {
       req.session.userId = user.__id;
+      req.session.name = user.first_name;
       // req.session.username = user.username;
       // console.log(req.session.username);
       return res.redirect('search');
@@ -88,6 +91,10 @@ if (req.body.username && req.body.password) {
 
 }
 
+});
+
+server.post('/logout', function (req, res) {
+  res.render('login', req.session.destroy());
 });
 server.get('/create', function(req, res){
   res.render('search', {
@@ -130,21 +137,20 @@ function seperateTags(categories){
 });
 
 server.get('/search', function(req, res, next){
-// if (! req.session.userId ) {
-//   let error = new Error("You are not authorized to view this page.");
-//   error.status = 403;
-//   return next(error);
-// }
+  // if (! res.locals.currentUser) {
+  //   res.render('login');
+  // } else
  User.findById(req.session.userId)
  .exec(function (error, user) {
    if (error) {
-     return next(error);
+     return res.render('login');
    }else {
-     return res.render('search');
+     return res.render('search', { name: req.session.name});
    }
+
+
  });
 });
-
 server.post('/search', function(req, res){
   function snippetFind(type, alter) {
     let updateObject = {};
@@ -154,6 +160,7 @@ server.post('/search', function(req, res){
   Snippet.find(updateObject)
     .then(function(data){
       res.render('search', {
+        name: req.session.name,
         type: alter,
       returnedData: data
       });
@@ -215,7 +222,7 @@ server.post('/edit', function(req, res){
     if (req.body.tags !== "") {
       updateSnippet("tags", req.body.tags);
     }
-    res.render('search');
+    res.render('search', { name: req.session.name});
 });
 server.get('/delete', function(req, res){
   res.render('search');
@@ -239,7 +246,7 @@ server.post('/delete', function(req, res) {
 if (req.body.delete_title){
   deleteSnippet();
 }
-  res.render('search');
+  res.render('search', { name: req.session.name});
 });
 server.listen(3300, function(req, res){
   console.log("The server is running, booyahh");

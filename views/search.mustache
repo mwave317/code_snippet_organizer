@@ -5,20 +5,15 @@
       <meta charset="utf-8">
         <link rel="stylesheet" href="../css/styles.css">
       <body>
+      <header>
+        <p class = "welcome">You are logged in as, {{name}}</p>
+        <form  method="post" action="/logout">
+          <input id="logout" type="submit" value="Log Out">
+        </form>
+      </header>
 <main>
 <section>
-<h3>Search by coder, title, date published and/or language.</h3>
-<form method="post" action="/search">
-  <input type="text" name="coder" id="coder" placeholder="Please enter a name: ">
-  <input type="text" name="title" id="title" placeholder="Please enter a title: ">
-  <input type="date" name="published_date" id="published_date" placeholder="Please select a date: ">
-  <input type="text" name="language" id="language" placeholder="Coded in which language: ">
-  <input type="text" name="tags" id="tags" placeholder="Seperate tags with commas">
-  <input type="submit" value="submit">
-</form>
-</section>
-<section>
-<h3>Enter a code snippet here</h3>
+<h3>Create a snippet</h3>
 <form method="post" action="/create">
   <input type="text" name="coder" id="coder" placeholder="Please enter a name: ">
   <input type="text" name="title" id="title" placeholder="Please enter a title: ">
@@ -31,9 +26,9 @@
 </form>
 </section>
 <section>
-  <h3>Edit a record</h3>
+  <h3>Edit a snippet</h3>
 <form method="post" action="/edit">
-  <input type="text" name="coder" id="coder" placeholder="Name of coder: ">
+  <input type="text" name="coder" id="coder" placeholder="Name a name: ">
 <input type="text" name="title" id="title" placeholder="Please enter a title: ">
 <textarea rows="10" cols="19" name="body" id="body" placeholder="Please enter your code: "></textarea>
 <textarea rows="10" cols="19" name="notes" id="notes" placeholder="Place any notes here: "></textarea>
@@ -43,7 +38,18 @@
 </form>
 </section>
 <section>
-<h3>Search by coder and title to delete a snippet</h3>
+<h3>Search a snippet</h3>
+<form method="post" action="/search">
+  <input type="text" name="coder" id="coder" placeholder="Please enter a name: ">
+  <input type="text" name="title" id="title" placeholder="Please enter a title: ">
+  <input type="date" name="published_date" id="published_date" placeholder="Please select a date: ">
+  <input type="text" name="language" id="language" placeholder="Coded in which language: ">
+  <input type="text" name="tags" id="tags" placeholder="Seperate tags with commas">
+  <input type="submit" value="submit">
+</form>
+</section>
+<section>
+<h3>Delete a snippet</h3>
 <form method="post" action="/delete">
   <input type="text" name="delete_coder" id="coder"
   placeholder="Please enter a name: ">
@@ -54,7 +60,6 @@
 </section>
 </main>
 <aside>
-<p>{{#returnedData}}{{username}}{{/returnedData}}</p>
 <p>{{#returnedData}}
   <figure>
   <h2>{{coder}}</h2>

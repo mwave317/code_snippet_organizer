@@ -1,22 +1,49 @@
+
+.welcome {
+  display: inline-block;
+  font-size: 1.70em;
+  margin-top: .5%;
+}
+.credentials {
+  display: flex;
+  flex-direction: column;
+  padding: 4%;
+  margin-left: 40%;
+  margin-top: 30%;
+}
+select {
+  overflow-y: hidden;
+  overflow-x: scroll;
+}
+.signup {
+  margin-top: 31%;
+  margin-left: 50%;
+}
+header {
+  margin-right: 5%;
+}
+form {
+  display: inline-block;
+  float: right;
+}
 main {
   display: flex;
-  align-items: flex-start;
-
 }
 section {
-
-  margin: 5%;
-  height: 30%;
   width: 30%;
 }
-
 body {
-  background-image: url("../img/yoda.jpeg");
+  background-image: url("../img/Computers-Code.jpg");
   color: white;
 }
-
 h3 {
-  font-size: 2em;
+  font-size: 1.5em;
+  text-align: center;
+}
+#logout {
+  margin-top: 30%;
+  margin-left: 50%;
+  width: 100%;
 }
 input {
   height: 30px;
@@ -27,7 +54,7 @@ input {
 textarea {
   padding: 1%;
   margin: 1%;
-  margin-left: 1%;
+  margin-left: 3%;
 }
 aside {
   display: flex;
