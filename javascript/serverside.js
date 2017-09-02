@@ -15,8 +15,8 @@ server.engine('mustache', mustache());
 server.set('view engine', 'mustache');
 server.use(session({
     secret: 'mjkhbki76gvftyjuu66bnA9ou7g',
-    resave: false,
-    saveUninitialized: true
+    resave: true,
+    saveUninitialized: false
   }));
 
   // };
@@ -47,7 +47,6 @@ server.post('/signup', function(req, res){
     User.create({
     username: req.body.username,
     password: req.body.password,
-    reenterPassword: req.body.reenterPassword,
     first_name: req.body.first_name,
     last_name: req.body.last_name,
     city: req.body.city,
@@ -59,6 +58,7 @@ server.post('/signup', function(req, res){
   .catch(function(err){
     console.log(err);
   })
+  req.session.userId = user.id;
     res.render('login');
 });
 
@@ -66,24 +66,28 @@ server.get('/login', function (req, res){
     res.render('login');
 });
 
-server.post('/login', function(req, res) {
-    if (req.body.username !== username && req.body.password !== password) {
-      console.log('Wrong username or password');
-      res.render('login');
+server.post('/login', function(req, res, next) {
+if (req.body.username && req.body.password) {
+  User.authenticate(req.body.username, req.body.password, function (error, user){
+    if (error || !user) {
+      let error = new Error('That username or password does not match our records.');
+      // res.redirect('login')
+      return next(error);
+    } else {
+      req.session.userId = user.__id;
+      // req.session.username = user.username;
+      // console.log(req.session.username);
+      return res.redirect('search');
     }
-  else if (username !== null) {
-  req.session.username = req.body.username;
-    User.findOne({username: req.body.username, password: req.body.password})
-      .then(function(data){
-        req.session.ObjectId = data._id;
-        console.log(data._id);
-        res.render('search', { // save the uername and id and cannot be done in the rendor
-        username: req.session.username,
-        user: req.session.ObjectId, //don't forget to pass the object id and username in the session
-        })
-      });
-      res.redirect('/search');
-    }
+  });
+}else {
+  let error = new Error('Username and password are required.');
+  // err.status = 401;
+  res.render('login');
+  return error;
+
+}
+
 });
 server.get('/create', function(req, res){
   res.render('search', {
@@ -102,9 +106,6 @@ function seperateTags(categories){
   for (let i=0; i<splitTags.length; i++){ //loops over the split tags ;
     tagsInput.push(splitTags[i].trim());//trims each word to remove the empty spaces.
   }
-
-    //tags.push(tagsInput);
-
     return tagsInput;
   };
   console.log(seperateTags(req.body.tags));
@@ -128,9 +129,20 @@ function seperateTags(categories){
       res.render('search');
 });
 
-server.get('/search', function(req, res){
-
-    res.render('search');
+server.get('/search', function(req, res, next){
+// if (! req.session.userId ) {
+//   let error = new Error("You are not authorized to view this page.");
+//   error.status = 403;
+//   return next(error);
+// }
+ User.findById(req.session.userId)
+ .exec(function (error, user) {
+   if (error) {
+     return next(error);
+   }else {
+     return res.render('search');
+   }
+ });
 });
 
 server.post('/search', function(req, res){
@@ -205,10 +217,30 @@ server.post('/edit', function(req, res){
     }
     res.render('search');
 });
-server.get('/snippet', function(req, res){
+server.get('/delete', function(req, res){
   res.render('search');
-})
+});
 
+server.post('/delete', function(req, res) {
+  function deleteSnippet(){
+  Snippet.findOneAndRemove({title: req.body.delete_title})
+    .then(function(data){
+      res.render('search', {
+      returnedData: data
+      });
+      console.log(data);
+      console.log("Record Deleted!")
+    })
+    .catch(function(){
+      console.log("Record not Deleted!");
+    });
+
+};
+if (req.body.delete_title){
+  deleteSnippet();
+}
+  res.render('search');
+});
 server.listen(3300, function(req, res){
   console.log("The server is running, booyahh");
 });

@@ -6,16 +6,9 @@ main {
 section {
 
   margin: 5%;
-  /*border: 3px solid black;*/
-
-  /*margin: 40% 55%;*/
   height: 30%;
   width: 30%;
 }
-
-/*.search{
-  margin: 25% 45%;
-}*/
 
 body {
   background-image: url("../img/yoda.jpeg");
@@ -34,13 +27,16 @@ input {
 textarea {
   padding: 1%;
   margin: 1%;
-  margin-left: 2%;
+  margin-left: 1%;
+}
+aside {
+  display: flex;
+  display: flex-start;
 }
 figure {
-  display: inline-block;
   padding: 1%;
-  /*height: 400px;*/
-  width: 350px
-  color: blue;
+  word-wrap: break-word;
+  width: 40%;
+  color: white;
   border: 3px solid darkgray;
 }
