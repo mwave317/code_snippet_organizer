@@ -47,6 +47,12 @@ server.get('/signup', function(req, res){
     });
 });
 server.post('/signup', function(req, res){
+  if (req.body.password !== req.body.reenterPassword){
+    res.send("Yourpasswords didn't match");
+  }
+  if (req.body.password.length < 8){
+    res.send("Your password didn't meet the required length");
+  }
     User.create({
     username: req.body.username,
     password: req.body.password,
@@ -76,11 +82,11 @@ if (req.body.username && req.body.password) {
   error.status = 401;
       return error;
     } else {
-      req.session.userId = user.__id;
+      req.session.userId = user._id;
       req.session.name = user.first_name;
       // req.session.username = user.username;
       // console.log(req.session.username);
-      return res.redirect('search');
+      res.redirect('search');
     }
   });
 }else {
@@ -137,18 +143,19 @@ function seperateTags(categories){
 });
 
 server.get('/search', function(req, res, next){
-  // if (! res.locals.currentUser) {
-  //   res.render('login');
-  // } else
+  if (req.session.userId === undefined) {
+    res.redirect('login');
+    return
+  }
+
  User.findById(req.session.userId)
  .exec(function (error, user) {
    if (error) {
      return res.render('login');
+     console.log("I shouldn't be doing this.");
    }else {
      return res.render('search', { name: req.session.name});
    }
-
-
  });
 });
 server.post('/search', function(req, res){
@@ -228,7 +235,7 @@ server.get('/delete', function(req, res){
   res.render('search');
 });
 
-server.post('/delete', function(req, res) {
+server.delete('/delete', function(req, res) {
   function deleteSnippet(){
   Snippet.findOneAndRemove({title: req.body.delete_title})
     .then(function(data){
