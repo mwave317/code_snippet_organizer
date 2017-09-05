@@ -47,12 +47,6 @@ server.get('/signup', function(req, res){
     });
 });
 server.post('/signup', function(req, res){
-  if (req.body.password !== req.body.reenterPassword){
-    res.send("Yourpasswords didn't match");
-  }
-  if (req.body.password.length < 8){
-    res.send("Your password didn't meet the required length");
-  }
     User.create({
     username: req.body.username,
     password: req.body.password,
